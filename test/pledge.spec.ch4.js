@@ -77,6 +77,7 @@ describe('For a given promiseA (pA)', function(){
       var promiseB = promiseA.then();
       promiseA._internalResolve( 9001 );
       // Do not set state manually; a resolver should be called somewhere.
+      console.log('I AM PROMISEB: ', promiseB)
       expect( promiseB._state ).toBe( 'fulfilled' );
       expect( promiseB._value ).toBe( 9001 );
       // The above is a hint; from now on we'll use this custom matcher. Ignore
