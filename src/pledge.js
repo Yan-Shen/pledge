@@ -16,6 +16,8 @@ function $Promise (fnc){
 }
 
 $Promise.prototype.then = function(successCb, errorCb) {
+  var newPromise = new $Promise(function(){})
+
   if (typeof successCb !== 'function') {
     successCb = null
   }
@@ -23,21 +25,23 @@ $Promise.prototype.then = function(successCb, errorCb) {
     errorCb = null
   }
 
-
-  this._handlerGroups.push({
-    successCb, errorCb
-  })
-
   if (this._state === 'fulfilled') {
     successCb(this._value);
+    newPromise._internalResolve(this._value)
   } else if (this._state === 'rejected' && errorCb){
     errorCb(this._value);
+    newPromise._internalReject(this._value)
   }
 
+  this._handlerGroups.push({
+    successCb, errorCb, downstreamPromise: newPromise
+  })
+
+  return newPromise;
 }
 
 $Promise.prototype.catch = function(fnc){
-  this.then(null, fnc);
+  return this.then(null, fnc);
 }
 
 $Promise.prototype._internalResolve = function(value){
@@ -48,8 +52,9 @@ $Promise.prototype._internalResolve = function(value){
 
   // QUESTION FOR REVIEW: What is 'this' referring to when called in the cbObj callback? Why doesn't it refer to the cbObj rather than the Promise instance?
   this._handlerGroups.forEach(cbObj => {
-    return cbObj.successCb(this._value)
+    cbObj.downstreamPromise._internalResolve(value)
   })
+  console.log(this._handlerGroups, 'handlerGroups')
   this._handlerGroups = [];
 };
 
