@@ -8,7 +8,7 @@
 // variables and not be standards-compliant.
 
 // To execute the spec, run `npm test` in this directory. When you pass a test,
-// change the next pending test from active. This spec is iterative and
+// change the next pending test to active. This spec is iterative and
 // opinionated; do the tests in order.
 
 
